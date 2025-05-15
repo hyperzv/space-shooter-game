@@ -235,38 +235,61 @@
         .mobile-controls {
             display: none;
             position: fixed;
-            bottom: 20px;
+            bottom: 0;
             left: 0;
             right: 0;
-            padding: 10px;
+            padding: 20px;
             text-align: center;
             z-index: 1000;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 180px;
+        }
+
+        .movement-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 10px;
         }
 
         .control-button {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             margin: 5px;
             border-radius: 50%;
             background: rgba(255, 0, 255, 0.3);
-            border: 2px solid #ff00ff;
+            border: 3px solid #ff00ff;
             color: white;
-            font-size: 24px;
+            font-size: 32px;
             touch-action: none;
             user-select: none;
             -webkit-user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
         }
 
         .shoot-button {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             background: rgba(255, 255, 0, 0.3);
-            border: 2px solid #ffff00;
+            border: 3px solid #ffff00;
+            font-size: 40px;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
+            margin-right: 20px;
         }
 
         @media (max-width: 768px) {
             .mobile-controls {
-                display: block;
+                display: flex;
+            }
+
+            .game-section {
+                padding-bottom: 200px;
             }
 
             .welcome-text {
@@ -1087,10 +1110,17 @@
         const mobileControls = document.createElement('div');
         mobileControls.className = 'mobile-controls';
         mobileControls.innerHTML = `
-            <button class="control-button" id="leftBtn">←</button>
-            <button class="control-button" id="rightBtn">→</button>
-            <button class="control-button" id="upBtn">↑</button>
-            <button class="control-button" id="downBtn">↓</button>
+            <div class="movement-controls">
+                <div></div>
+                <button class="control-button" id="upBtn">↑</button>
+                <div></div>
+                <button class="control-button" id="leftBtn">←</button>
+                <div></div>
+                <button class="control-button" id="rightBtn">→</button>
+                <div></div>
+                <button class="control-button" id="downBtn">↓</button>
+                <div></div>
+            </div>
             <button class="control-button shoot-button" id="shootBtn">🔫</button>
         `;
         gameSection.appendChild(mobileControls);
