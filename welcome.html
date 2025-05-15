@@ -86,6 +86,7 @@
             align-items: center;
             padding: 20px;
             background: linear-gradient(to bottom, black, #1a0033);
+            position: relative;
         }
 
         .game-title {
@@ -107,6 +108,27 @@
             color: #fff;
             text-align: center;
             font-size: 1.2em;
+        }
+
+        .click-to-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: #ff00ff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            pointer-events: none;
+            text-shadow: 0 0 10px #ff00ff;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .click-to-play.visible {
+            opacity: 1;
         }
 
         /* Names Section Styles */
@@ -329,12 +351,14 @@
         canvas.addEventListener('mouseenter', () => {
             isGameFocused = true;
             canvas.style.outline = '2px solid #ff00ff';
+            clickToPlay.classList.remove('visible');
         });
 
         // Remove game focus when mouse leaves canvas
         canvas.addEventListener('mouseleave', () => {
             isGameFocused = false;
             canvas.style.outline = 'none';
+            clickToPlay.classList.add('visible');
         });
 
         const player = {
@@ -1157,6 +1181,15 @@
                 canvas.style.outline = 'none';
             }
         });
+
+        // Add click to play message
+        const clickToPlay = document.createElement('div');
+        clickToPlay.className = 'click-to-play';
+        clickToPlay.textContent = 'Click to Play!';
+        gameSection.appendChild(clickToPlay);
+
+        // Show message initially
+        clickToPlay.classList.add('visible');
     </script>
 </body>
 </html> 
