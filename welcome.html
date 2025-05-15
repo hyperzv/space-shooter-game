@@ -235,83 +235,38 @@
         .mobile-controls {
             display: none;
             position: fixed;
-            bottom: 0;
+            bottom: 20px;
             left: 0;
             right: 0;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
             z-index: 1000;
-            background: rgba(0, 0, 0, 0.3);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 180px;
-        }
-
-        .movement-controls {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 10px;
         }
 
         .control-button {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             margin: 5px;
             border-radius: 50%;
             background: rgba(255, 0, 255, 0.3);
-            border: 3px solid #ff00ff;
+            border: 2px solid #ff00ff;
             color: white;
-            font-size: 32px;
+            font-size: 24px;
             touch-action: none;
             user-select: none;
             -webkit-user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
         }
 
         .shoot-button {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background: rgba(255, 255, 0, 0.3);
-            border: 3px solid #ffff00;
-            font-size: 40px;
-            box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
-            margin-right: 20px;
+            border: 2px solid #ffff00;
         }
 
         @media (max-width: 768px) {
             .mobile-controls {
-                display: flex;
-            }
-
-            .game-section {
-                padding-bottom: 200px;
-            }
-
-            .welcome-text {
-                font-size: 2.5em;
-            }
-
-            .game-section {
-                padding: 10px;
-            }
-
-            #gameCanvas {
-                width: 100%;
-                height: auto;
-                max-width: 600px;
-            }
-
-            .credit {
-                font-size: 3em;
-            }
-
-            .credit-small {
-                font-size: 1.5em;
+                display: block;
             }
         }
     </style>
@@ -693,19 +648,22 @@
                     ctx.fillText('Retry', 0, 8);
                     ctx.restore();
                     
-                    // Only add click handler when button is fully visible
-                    if (buttonScale >= 1) {
-                        canvas.onclick = function(e) {
-                            const rect = canvas.getBoundingClientRect();
-                            const clickX = e.clientX - rect.left;
-                            const clickY = e.clientY - rect.top;
-                            
-                            if (clickX >= buttonX && clickX <= buttonX + buttonWidth &&
-                                clickY >= buttonY && clickY <= buttonY + buttonHeight) {
-                                resetGame();
-                            }
-                        };
+                    // Add both click and touch handlers for retry
+                    function handleRetryClick(e) {
+                        const rect = canvas.getBoundingClientRect();
+                        const clickX = (e.clientX || e.touches[0].clientX) - rect.left;
+                        const clickY = (e.clientY || e.touches[0].clientY) - rect.top;
+                        
+                        if (clickX >= buttonX && clickX <= buttonX + buttonWidth &&
+                            clickY >= buttonY && clickY <= buttonY + buttonHeight) {
+                            canvas.removeEventListener('click', handleRetryClick);
+                            canvas.removeEventListener('touchstart', handleRetryClick);
+                            resetGame();
+                        }
                     }
+                    
+                    canvas.addEventListener('click', handleRetryClick);
+                    canvas.addEventListener('touchstart', handleRetryClick);
                 }
                 
                 if (opacity < 0.8 || textScale < 1 || buttonScale < 1) {
@@ -791,19 +749,22 @@
                     ctx.fillText('Play Again', 0, 8);
                     ctx.restore();
                     
-                    // Only add click handler when button is fully visible
-                    if (buttonScale >= 1) {
-                        canvas.onclick = function(e) {
-                            const rect = canvas.getBoundingClientRect();
-                            const clickX = e.clientX - rect.left;
-                            const clickY = e.clientY - rect.top;
-                            
-                            if (clickX >= buttonX && clickX <= buttonX + buttonWidth &&
-                                clickY >= buttonY && clickY <= buttonY + buttonHeight) {
-                                resetGame();
-                            }
-                        };
+                    // Add both click and touch handlers for play again
+                    function handlePlayAgainClick(e) {
+                        const rect = canvas.getBoundingClientRect();
+                        const clickX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+                        const clickY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+                        
+                        if (clickX >= buttonX && clickX <= buttonX + buttonWidth &&
+                            clickY >= buttonY && clickY <= buttonY + buttonHeight) {
+                            canvas.removeEventListener('click', handlePlayAgainClick);
+                            canvas.removeEventListener('touchstart', handlePlayAgainClick);
+                            resetGame();
+                        }
                     }
+                    
+                    canvas.addEventListener('click', handlePlayAgainClick);
+                    canvas.addEventListener('touchstart', handlePlayAgainClick);
                 }
                 
                 if (opacity < 0.8 || textScale < 1 || buttonScale < 1) {
@@ -1106,24 +1067,16 @@
         handleScroll(); // Initial check
 
         // Add mobile controls HTML
-        const gameSection = document.querySelector('.game-section');
         const mobileControls = document.createElement('div');
         mobileControls.className = 'mobile-controls';
         mobileControls.innerHTML = `
-            <div class="movement-controls">
-                <div></div>
-                <button class="control-button" id="upBtn">↑</button>
-                <div></div>
-                <button class="control-button" id="leftBtn">←</button>
-                <div></div>
-                <button class="control-button" id="rightBtn">→</button>
-                <div></div>
-                <button class="control-button" id="downBtn">↓</button>
-                <div></div>
-            </div>
+            <button class="control-button" id="leftBtn">←</button>
+            <button class="control-button" id="rightBtn">→</button>
+            <button class="control-button" id="upBtn">↑</button>
+            <button class="control-button" id="downBtn">↓</button>
             <button class="control-button shoot-button" id="shootBtn">🔫</button>
         `;
-        gameSection.appendChild(mobileControls);
+        canvas.parentElement.appendChild(mobileControls);
 
         // Mobile touch controls
         let touchControls = {
@@ -1201,6 +1154,7 @@
         canvas.addEventListener('touchstart', () => {
             isGameFocused = true;
             canvas.style.outline = '2px solid #ff00ff';
+            clickToPlay.classList.remove('visible');
         });
 
         canvas.addEventListener('touchend', () => {
@@ -1212,11 +1166,17 @@
             }
         });
 
+        // Auto-focus on mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            isGameFocused = true;
+            clickToPlay.style.display = 'none';
+        }
+
         // Add click to play message
         const clickToPlay = document.createElement('div');
         clickToPlay.className = 'click-to-play';
         clickToPlay.textContent = 'Click to Play!';
-        gameSection.appendChild(clickToPlay);
+        canvas.parentElement.appendChild(clickToPlay);
 
         // Show message initially
         clickToPlay.classList.add('visible');
